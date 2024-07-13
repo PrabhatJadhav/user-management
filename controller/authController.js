@@ -63,6 +63,19 @@ exports.customerRegister = (req, res, next) => {
           });
         })
         .catch((error) => {
+          console.log("error", error);
+          if (
+            error?.errorResponse?.code == 11000 &&
+            error?.errorResponse?.keyPattern?.email
+          ) {
+            res.status(500).send({
+              message: "Email Already Exists!",
+              error,
+            });
+
+            return;
+          }
+
           res.status(500).send({
             message: "Error creating user",
             error,
