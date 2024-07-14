@@ -1,45 +1,79 @@
 const bcrypt = require("bcrypt");
-const { UserLogin, UserRegister } = require("../model/userModel");
+const { UserEmail } = require("../model/userModel");
 var validator = require("validator");
 const lodash = require("lodash");
 const AppError = require("../utils/appError");
 const ApiResponse = require("../utils/apiResponse");
 
-exports.customerLogin = async (req, res, next) => {
-  // check for email
+const customerLogin = async (req, res, next) => {
+  try {
+    let userEmail = req.body.email;
+    let isValidEmail;
 
-  bcrypt
-    .hash(request.body.password, 10)
-    .then((hashedPassword) => {
-      const user = new UserLogin({
-        email: request.body.email,
-        password: hashedPassword,
-      });
+    if (userEmail) {
+      isValidEmail = validator.isEmail(userEmail);
+    }
 
-      user
-        .save()
-        .then((result) => {
-          response.status(200).send({
-            message: "User Created Successfully",
-            result,
-          });
-        })
-        .catch((error) => {
-          response.status(500).send({
-            message: "Error creating user",
-            error,
-          });
-        });
-    })
-    .catch((e) => {
-      response.status(500).send({
-        message: "Password was not hashed successfully",
-        e,
-      });
-    });
+    if (userEmail && isValidEmail) {
+      // const user = new UserEmail({
+      //   email: userEmail,
+      // });
+
+      const user = await UserEmail.findOne({ email: userEmail });
+
+      if (user?.email == userEmail) {
+        res
+          .status(200)
+          .json(
+            new ApiResponse({ message: "User found successfully!", data: user })
+          );
+      } else {
+        res.status(500).json(new AppError("User not found!", 500));
+      }
+    } else {
+      res
+        .status(400)
+        .json(new ApiResponse({ message: "Please provide valid Email!" }));
+    }
+  } catch (e) {
+    console.log("e", e);
+    res.status(500).json(new AppError("Something Went Wrong!", 500));
+  }
+
+  // for passwords
+
+  // bcrypt
+  //   .hash(request.body.password, 10)
+  //   .then((hashedPassword) => {
+  //     const user = new UserLogin({
+  //       email: request.body.email,
+  //       password: hashedPassword,
+  //     });
+
+  //     user
+  //       .save()
+  //       .then((result) => {
+  //         response.status(200).send({
+  //           message: "User Created Successfully",
+  //           result,
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         response.status(500).send({
+  //           message: "Error creating user",
+  //           error,
+  //         });
+  //       });
+  //   })
+  //   .catch((e) => {
+  //     response.status(500).send({
+  //       message: "Password was not hashed successfully",
+  //       e,
+  //     });
+  //   });
 };
 
-exports.customerRegister = (req, res, next) => {
+const customerRegister = (req, res, next) => {
   // console.log("req.body", _.get(req.body));
   try {
     let userEmail = req.body.email;
@@ -50,7 +84,7 @@ exports.customerRegister = (req, res, next) => {
     }
 
     if (userEmail && isValidEmail) {
-      const user = new UserRegister({
+      const user = new UserEmail({
         email: userEmail,
       });
 
@@ -92,3 +126,5 @@ exports.customerRegister = (req, res, next) => {
     res.status(500).json(new AppError("Something Went Wrong!", 500));
   }
 };
+
+module.exports = { customerRegister, customerLogin };
