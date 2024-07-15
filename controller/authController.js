@@ -4,6 +4,7 @@ var validator = require("validator");
 const lodash = require("lodash");
 const AppError = require("../utils/appError");
 const ApiResponse = require("../utils/apiResponse");
+const { sentEmail } = require("../utils/emailSender");
 
 const customerLogin = async (req, res, next) => {
   try {
@@ -22,6 +23,8 @@ const customerLogin = async (req, res, next) => {
       const user = await UserEmail.findOne({ email: userEmail });
 
       if (user?.email == userEmail) {
+        sentEmail(userEmail);
+
         res
           .status(200)
           .json(
