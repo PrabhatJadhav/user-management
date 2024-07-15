@@ -17,6 +17,7 @@
     "joi": "^17.12.3",
     "lodash": "^4.17.21",
     "mongoose": "^8.3.2",
+    "nodemailer": "^6.9.14",
     "validator": "^13.11.0"
   },
   "devDependencies": {
