@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-async function sentEmail(receiverEmail) {
+async function sentEmail(receiverEmail: string) {
   if (!receiverEmail) {
     return;
   }
@@ -35,4 +35,4 @@ async function sentEmail(receiverEmail) {
   // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
 }
 
-module.exports = { sentEmail };
+export { sentEmail };
