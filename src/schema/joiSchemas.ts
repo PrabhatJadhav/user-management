@@ -12,4 +12,4 @@ const emailSchema = Joi.object({
 //   password: Joi.number().required(),
 // });
 
-module.exports = { emailSchema };
+export { emailSchema };

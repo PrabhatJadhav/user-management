@@ -1,12 +1,11 @@
-const bcrypt = require("bcrypt");
-const { UserEmail } = require("../model/userModel");
+import bcrypt from "bcrypt";
+import { UserEmail } from "../model/userModel";
 var validator = require("validator");
-const lodash = require("lodash");
-const AppError = require("../utils/appError");
-const ApiResponse = require("../utils/apiResponse");
-const { sentEmail } = require("../utils/emailSender");
+import lodash from "lodash";
+import { sentEmail } from "../utils/emailSender";
+import { ApiResponse } from "../utils/apiResponse";
 
-const customerLogin = async (req, res, next) => {
+const customerLogin = async (req: any, res: any, next: any) => {
   try {
     let userEmail = req.body.email;
     let isValidEmail;
@@ -16,10 +15,6 @@ const customerLogin = async (req, res, next) => {
     }
 
     if (userEmail && isValidEmail) {
-      // const user = new UserEmail({
-      //   email: userEmail,
-      // });
-
       const user = await UserEmail.findOne({ email: userEmail });
 
       if (user?.email == userEmail) {
@@ -27,20 +22,18 @@ const customerLogin = async (req, res, next) => {
 
         res
           .status(200)
-          .json(
-            new ApiResponse({ message: "User found successfully!", data: user })
-          );
+          .json(ApiResponse.success(user, "User found successfully!", 200));
       } else {
-        res.status(500).json(new AppError("User not found!", 500));
+        res.status(500).json(ApiResponse.failure("User not found!", 500));
       }
     } else {
       res
         .status(400)
-        .json(new ApiResponse({ message: "Please provide valid Email!" }));
+        .json(ApiResponse.success(null, "Please provide valid Email!", 400));
     }
   } catch (e) {
     console.log("e", e);
-    res.status(500).json(new AppError("Something Went Wrong!", 500));
+    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 400));
   }
 
   // for passwords
@@ -76,7 +69,7 @@ const customerLogin = async (req, res, next) => {
   //   });
 };
 
-const customerRegister = (req, res, next) => {
+const customerRegister = (req: any, res: any, next: any) => {
   // console.log("req.body", _.get(req.body));
   try {
     let userEmail = req.body.email;
@@ -119,14 +112,13 @@ const customerRegister = (req, res, next) => {
           });
         });
     } else {
-      // return next(new AppError("Please provide valid Email!", 400));
       res
         .status(400)
-        .json(new ApiResponse({ message: "Please provide valid Email!" }));
+        .json(ApiResponse.success(null, "Please provide valid Email!", 400));
     }
   } catch (e) {
     console.log("e", e);
-    res.status(500).json(new AppError("Something Went Wrong!", 500));
+    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 400));
   }
 };
 

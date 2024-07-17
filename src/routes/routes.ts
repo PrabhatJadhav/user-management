@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 // Test endpoints
 
-router.get("/test-api", (req, res) => {
+router.get("/test-api", (req: any, res: any) => {
   res
     .status(200)
     .send({ data: "Hello, this is test api welcome to port 8080" });
@@ -15,4 +15,4 @@ router.post("/register", authController.customerRegister);
 
 router.post("/login", authController.customerLogin);
 
-module.exports = router;
+export { router };
