@@ -1,10 +1,10 @@
 import mongoose, { Schema, Model } from "mongoose";
 
-interface IUserEmail {
+interface UserEmail {
   email: string;
 }
 
-const UserEmailSchema: Schema<IUserEmail> = new Schema({
+const UserEmailSchema: Schema<UserEmail> = new Schema({
   email: {
     type: String,
     required: [true, "Please provide a valid Email!"],
@@ -12,7 +12,7 @@ const UserEmailSchema: Schema<IUserEmail> = new Schema({
   },
 });
 
-const UserEmail: Model<IUserEmail> = mongoose.model<IUserEmail>(
+const UserEmail: Model<UserEmail> = mongoose.model<UserEmail>(
   "UserEmail",
   UserEmailSchema,
   "userregisters"
