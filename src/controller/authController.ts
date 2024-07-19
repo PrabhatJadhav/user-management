@@ -4,6 +4,7 @@ var validator = require("validator");
 import lodash from "lodash";
 import { sentEmail } from "../utils/emailSender";
 import { ApiResponse } from "../utils/apiResponse";
+import { createOtp, sendOtp, verifyEmailOtp } from "../utils/otpSender";
 
 const customerLogin = async (req: any, res: any, next: any) => {
   try {
@@ -17,8 +18,11 @@ const customerLogin = async (req: any, res: any, next: any) => {
     if (userEmail && isValidEmail) {
       const user = await UserEmail.findOne({ email: userEmail });
 
-      if (user?.email == userEmail) {
-        sentEmail(userEmail);
+      if (user?.email == userEmail && user?._id) {
+        // sentEmail(userEmail);
+
+        const otp = await createOtp(user._id.toString());
+        await sendOtp(userEmail, otp);
 
         res
           .status(200)
@@ -33,7 +37,7 @@ const customerLogin = async (req: any, res: any, next: any) => {
     }
   } catch (e) {
     console.log("e", e);
-    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 400));
+    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
   }
 
   // for passwords
@@ -118,8 +122,42 @@ const customerRegister = (req: any, res: any, next: any) => {
     }
   } catch (e) {
     console.log("e", e);
-    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 400));
+    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
   }
 };
 
-module.exports = { customerRegister, customerLogin };
+const verifyOtp = async (req: any, res: any, next: any) => {
+  try {
+    let { otp, userId } = req.body;
+
+    if (otp && userId) {
+      try {
+        const { userId, otp } = req.body;
+        const isValidOtp = await verifyEmailOtp(userId, otp);
+
+        if (!isValidOtp) {
+          return res
+            .status(500)
+            .json(ApiResponse.failure("Invalid or Expired OTP!", 500));
+        }
+
+        console.log("otp success", isValidOtp);
+
+        // Respond with tokens
+      } catch {
+        res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
+      }
+    } else if (userId) {
+      res.status(400).json(ApiResponse.success(null, "User not found!", 400));
+    } else {
+      res
+        .status(400)
+        .json(ApiResponse.success(null, "Please provide otp!", 400));
+    }
+  } catch (e) {
+    console.log("e", e);
+    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
+  }
+};
+
+export { customerRegister, customerLogin, verifyOtp };
