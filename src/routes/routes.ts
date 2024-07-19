@@ -1,4 +1,8 @@
-const authController = require("../controller/authController");
+import {
+  customerRegister,
+  customerLogin,
+  verifyOtp,
+} from "../controller/authController";
 const express = require("express");
 const router = express.Router();
 // Test endpoints
@@ -11,8 +15,10 @@ router.get("/test-api", (req: any, res: any) => {
 
 // User Login related endpoints
 
-router.post("/register", authController.customerRegister);
+router.post("/register", customerRegister);
 
-router.post("/login", authController.customerLogin);
+router.post("/login", customerLogin);
+
+router.post("/verify-email-otp", verifyOtp);
 
 export { router };

@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
 require("dotenv").config();
 
 async function sentEmail(receiverEmail: string) {
@@ -18,20 +18,23 @@ async function sentEmail(receiverEmail: string) {
   });
 
   // send mail with defined transport object
-  const info = await transporter.sendMail({
-    from: {
-      name: "Prabhat Test Mails",
-      address: process.env.EMAIL_SENDER_ACCOUNT,
-    }, // sender address
-    to: receiverEmail, // list of receivers
-    subject: "Hello ✔", // Subject line
-    text: "Hello world?", // plain text body
-    html: `<b>Hello world?</b> OTP ==> ${Math.floor(
-      100000 + Math.random() * 900000
-    )}`, // html body
-  });
+  if (process.env.EMAIL_SENDER_ACCOUNT) {
+    const info: any = await transporter.sendMail({
+      from: {
+        name: "Prabhat Test Mails",
+        address: process.env.EMAIL_SENDER_ACCOUNT,
+      }, // sender address
+      to: receiverEmail, // list of receivers
+      subject: "Hello ✔", // Subject line
+      text: "Hello world?", // plain text body
+      html: `<b>Hello world?</b> OTP ==> ${Math.floor(
+        100000 + Math.random() * 900000
+      )}`,
+    });
 
-  console.log("Message sent: %s", info?.messageId);
+    console.log("Message sent: %s", info?.messageId);
+  }
+
   // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
 }
 
