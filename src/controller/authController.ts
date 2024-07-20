@@ -1,8 +1,6 @@
 import bcrypt from "bcrypt";
 import { UserEmail } from "../model/userModel";
 var validator = require("validator");
-import lodash from "lodash";
-import { sentEmail } from "../utils/emailSender";
 import { ApiResponse } from "../utils/apiResponse";
 import { createOtp, sendOtp, verifyEmailOtp } from "../utils/otpSender";
 
@@ -19,14 +17,10 @@ const customerLogin = async (req: any, res: any, next: any) => {
       const user = await UserEmail.findOne({ email: userEmail });
 
       if (user?.email == userEmail && user?._id) {
-        // sentEmail(userEmail);
-
         const otp = await createOtp(user._id.toString());
         await sendOtp(userEmail, otp);
 
-        res
-          .status(200)
-          .json(ApiResponse.success(user, "User found successfully!", 200));
+        res.status(200).json(ApiResponse.success(user, "Otp sent!", 200));
       } else {
         res.status(500).json(ApiResponse.failure("User not found!", 500));
       }
@@ -147,12 +141,12 @@ const verifyOtp = async (req: any, res: any, next: any) => {
       } catch {
         res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
       }
-    } else if (userId) {
+    } else if (otp && !userId) {
       res.status(400).json(ApiResponse.success(null, "User not found!", 400));
     } else {
       res
         .status(400)
-        .json(ApiResponse.success(null, "Please provide otp!", 400));
+        .json(ApiResponse.success(null, "Please provide valid otp!", 400));
     }
   } catch (e) {
     console.log("e", e);
