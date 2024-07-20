@@ -5,6 +5,8 @@ import {
 } from "../controller/authController";
 const express = require("express");
 const router = express.Router();
+import "../cron/otpCleanupCron";
+
 // Test endpoints
 
 router.get("/test-api", (req: any, res: any) => {
