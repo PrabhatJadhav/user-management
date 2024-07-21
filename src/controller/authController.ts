@@ -3,9 +3,13 @@ import { UserEmail } from "../model/userModel";
 var validator = require("validator");
 import { ApiResponse } from "../utils/apiResponse";
 import { createOtp, sendOtp, verifyEmailOtp } from "../utils/otpSender";
-import { generateRefreshToken, generateToken } from "../utils/authUtils";
+import {
+  generateRefreshToken,
+  generateToken,
+  verifyRefreshToken,
+} from "../utils/authUtils";
 import { UserRoles } from "../enums/roleEnums";
-import { JwtTokenPayload } from "../model/jwtTokenPayload.mode";
+import { JwtTokenPayload } from "../model/jwtTokenPayload.model";
 
 const customerLogin = async (req: any, res: any, next: any) => {
   try {
@@ -129,7 +133,6 @@ const verifyOtp = async (req: any, res: any, next: any) => {
 
     if (otp && userId) {
       try {
-        const { userId, otp } = req.body;
         const isValidOtp = await verifyEmailOtp(userId, otp);
 
         if (!isValidOtp) {
@@ -139,23 +142,31 @@ const verifyOtp = async (req: any, res: any, next: any) => {
         }
 
         //  Respond with tokens
-        let payload: JwtTokenPayload = {
-          userId: userId?.toString(),
-          role: UserRoles.CUSTOMER,
-        };
 
-        const token = generateToken(payload);
-        const refreshToken = generateRefreshToken(payload);
+        try {
+          let payload: JwtTokenPayload = {
+            userId: userId,
+            role: UserRoles.CUSTOMER,
+          };
 
-        res
-          .status(200)
-          .json(
-            ApiResponse.success(
-              { token: token, refreshToken: refreshToken },
-              "Otp verified successfully!",
-              200
-            )
-          );
+          const token = generateToken(payload);
+          const refreshToken = generateRefreshToken(payload);
+
+          res
+            .status(200)
+            .json(
+              ApiResponse.success(
+                { token: token, refreshToken: refreshToken },
+                "Otp verified successfully!",
+                200
+              )
+            );
+        } catch (err) {
+          console.log("err with token", err);
+          res
+            .status(500)
+            .json(ApiResponse.failure("Something Went Wrong!", 500));
+        }
       } catch {
         res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
       }
@@ -172,4 +183,62 @@ const verifyOtp = async (req: any, res: any, next: any) => {
   }
 };
 
-export { customerRegister, customerLogin, verifyOtp };
+const getRefreshToken = async (req: any, res: any, next: any) => {
+  try {
+    let { refreshToken, userId } = req.body;
+
+    if (refreshToken && userId) {
+      const refreshTokenDetails: JwtTokenPayload | null =
+        verifyRefreshToken(refreshToken);
+
+      if (refreshTokenDetails?.role) {
+        try {
+          let payload: JwtTokenPayload = {
+            userId: userId,
+            role: refreshTokenDetails?.role,
+          };
+
+          const token = generateToken(payload);
+
+          res
+            .status(200)
+            .json(
+              ApiResponse.success(
+                { token: token, refreshToken: refreshToken },
+                "New access token generated successfully!",
+                200
+              )
+            );
+        } catch (err) {
+          console.log("err with token", err);
+          res
+            .status(500)
+            .json(ApiResponse.failure("Something Went Wrong!", 500));
+        }
+      } else {
+        res
+          .status(401)
+          .json(
+            ApiResponse.success(
+              null,
+              "Please provide valid refresh token!",
+              401
+            )
+          );
+      }
+    } else if (refreshToken && !userId) {
+      res.status(400).json(ApiResponse.success(null, "User not found!", 400));
+    } else {
+      res
+        .status(401)
+        .json(
+          ApiResponse.success(null, "Please provide valid refresh token!", 401)
+        );
+    }
+  } catch (e) {
+    console.log("e", e);
+    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
+  }
+};
+
+export { customerRegister, customerLogin, verifyOtp, getRefreshToken };
