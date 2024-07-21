@@ -3,6 +3,9 @@ import { UserEmail } from "../model/userModel";
 var validator = require("validator");
 import { ApiResponse } from "../utils/apiResponse";
 import { createOtp, sendOtp, verifyEmailOtp } from "../utils/otpSender";
+import { generateRefreshToken, generateToken } from "../utils/authUtils";
+import { UserRoles } from "../enums/roleEnums";
+import { JwtTokenPayload } from "../model/jwtTokenPayload.mode";
 
 const customerLogin = async (req: any, res: any, next: any) => {
   try {
@@ -20,7 +23,7 @@ const customerLogin = async (req: any, res: any, next: any) => {
         const otp = await createOtp(user._id.toString());
         await sendOtp(userEmail, otp);
 
-        res.status(200).json(ApiResponse.success(user, "Otp sent!", 200));
+        res.status(200).json(ApiResponse.success(null, "Otp sent!", 200));
       } else {
         res.status(500).json(ApiResponse.failure("User not found!", 500));
       }
@@ -135,9 +138,24 @@ const verifyOtp = async (req: any, res: any, next: any) => {
             .json(ApiResponse.failure("Invalid or Expired OTP!", 500));
         }
 
-        console.log("otp success", isValidOtp);
+        //  Respond with tokens
+        let payload: JwtTokenPayload = {
+          userId: userId?.toString(),
+          role: UserRoles.CUSTOMER,
+        };
 
-        // Respond with tokens
+        const token = generateToken(payload);
+        const refreshToken = generateRefreshToken(payload);
+
+        res
+          .status(200)
+          .json(
+            ApiResponse.success(
+              { token: token, refreshToken: refreshToken },
+              "Otp verified successfully!",
+              200
+            )
+          );
       } catch {
         res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
       }
