@@ -1,10 +1,15 @@
 import bcrypt from "bcrypt";
 import { UserEmail } from "../model/userModel";
 var validator = require("validator");
-import lodash from "lodash";
-import { sentEmail } from "../utils/emailSender";
 import { ApiResponse } from "../utils/apiResponse";
 import { createOtp, sendOtp, verifyEmailOtp } from "../utils/otpSender";
+import {
+  generateRefreshToken,
+  generateToken,
+  verifyRefreshToken,
+} from "../utils/authUtils";
+import { UserRoles } from "../enums/roleEnums";
+import { JwtTokenPayload } from "../model/jwtTokenPayload.model";
 
 const customerLogin = async (req: any, res: any, next: any) => {
   try {
@@ -19,14 +24,10 @@ const customerLogin = async (req: any, res: any, next: any) => {
       const user = await UserEmail.findOne({ email: userEmail });
 
       if (user?.email == userEmail && user?._id) {
-        // sentEmail(userEmail);
-
         const otp = await createOtp(user._id.toString());
         await sendOtp(userEmail, otp);
 
-        res
-          .status(200)
-          .json(ApiResponse.success(user, "User found successfully!", 200));
+        res.status(200).json(ApiResponse.success(null, "Otp sent!", 200));
       } else {
         res.status(500).json(ApiResponse.failure("User not found!", 500));
       }
@@ -132,7 +133,6 @@ const verifyOtp = async (req: any, res: any, next: any) => {
 
     if (otp && userId) {
       try {
-        const { userId, otp } = req.body;
         const isValidOtp = await verifyEmailOtp(userId, otp);
 
         if (!isValidOtp) {
@@ -141,18 +141,41 @@ const verifyOtp = async (req: any, res: any, next: any) => {
             .json(ApiResponse.failure("Invalid or Expired OTP!", 500));
         }
 
-        console.log("otp success", isValidOtp);
+        //  Respond with tokens
 
-        // Respond with tokens
+        try {
+          let payload: JwtTokenPayload = {
+            userId: userId,
+            role: UserRoles.CUSTOMER,
+          };
+
+          const token = generateToken(payload);
+          const refreshToken = generateRefreshToken(payload);
+
+          res
+            .status(200)
+            .json(
+              ApiResponse.success(
+                { token: token, refreshToken: refreshToken },
+                "Otp verified successfully!",
+                200
+              )
+            );
+        } catch (err) {
+          console.log("err with token", err);
+          res
+            .status(500)
+            .json(ApiResponse.failure("Something Went Wrong!", 500));
+        }
       } catch {
         res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
       }
-    } else if (userId) {
+    } else if (otp && !userId) {
       res.status(400).json(ApiResponse.success(null, "User not found!", 400));
     } else {
       res
         .status(400)
-        .json(ApiResponse.success(null, "Please provide otp!", 400));
+        .json(ApiResponse.success(null, "Please provide valid otp!", 400));
     }
   } catch (e) {
     console.log("e", e);
@@ -160,4 +183,62 @@ const verifyOtp = async (req: any, res: any, next: any) => {
   }
 };
 
-export { customerRegister, customerLogin, verifyOtp };
+const getRefreshToken = async (req: any, res: any, next: any) => {
+  try {
+    let { refreshToken, userId } = req.body;
+
+    if (refreshToken && userId) {
+      const refreshTokenDetails: JwtTokenPayload | null =
+        verifyRefreshToken(refreshToken);
+
+      if (refreshTokenDetails?.role) {
+        try {
+          let payload: JwtTokenPayload = {
+            userId: userId,
+            role: refreshTokenDetails?.role,
+          };
+
+          const token = generateToken(payload);
+
+          res
+            .status(200)
+            .json(
+              ApiResponse.success(
+                { token: token, refreshToken: refreshToken },
+                "New access token generated successfully!",
+                200
+              )
+            );
+        } catch (err) {
+          console.log("err with token", err);
+          res
+            .status(500)
+            .json(ApiResponse.failure("Something Went Wrong!", 500));
+        }
+      } else {
+        res
+          .status(401)
+          .json(
+            ApiResponse.success(
+              null,
+              "Please provide valid refresh token!",
+              401
+            )
+          );
+      }
+    } else if (refreshToken && !userId) {
+      res.status(400).json(ApiResponse.success(null, "User not found!", 400));
+    } else {
+      res
+        .status(401)
+        .json(
+          ApiResponse.success(null, "Please provide valid refresh token!", 401)
+        );
+    }
+  } catch (e) {
+    console.log("e", e);
+    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
+  }
+};
+
+export { customerRegister, customerLogin, verifyOtp, getRefreshToken };

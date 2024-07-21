@@ -1,3 +1,10 @@
+/*** 
+Code not in use,
+ 
+Only kept for testing purpose and understanding the functionality
+
+***/
+
 import nodemailer from "nodemailer";
 require("dotenv").config();
 

@@ -35,12 +35,17 @@ export const sendOtp = async (userEmail: string, otp: string) => {
 };
 
 export const verifyEmailOtp = async (userId: string, otp: string) => {
-  const otpRecord = await OtpSchema.findOne({ userId, otp });
-  if (!otpRecord || otpRecord.expiresAt < new Date()) {
+  try {
+    const otpRecord = await OtpSchema.findOne({ userId, otp });
+    if (!otpRecord || otpRecord.expiresAt < new Date()) {
+      return false;
+    }
+    await OtpSchema.deleteOne({ _id: otpRecord._id });
+    return true;
+  } catch (err) {
+    console.log("err with verify otp", err);
     return false;
   }
-  await OtpSchema.deleteOne({ _id: otpRecord._id });
-  return true;
 };
 
 export const createOtp = async (userId: string) => {
