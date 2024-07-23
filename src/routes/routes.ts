@@ -39,7 +39,7 @@ router.post("/generate-refresh-token", getRefreshToken);
 
 // Watchlist related endpoints
 
-router.get("/watchlist/:id", addToWatchlist);
+router.get("/watchlist/:userId/:productId", addToWatchlist);
 
 router.delete("/watchlist/:id", removeFromWatchlist);
 
