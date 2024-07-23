@@ -1,14 +1,20 @@
 import mongoose, { Schema, Model } from "mongoose";
 
 interface UserWatchlistObject {
-  id: string;
+  productId: string;
+  userId: string;
 }
 
 const UserWatchlistObjectSchema: Schema<UserWatchlistObject> = new Schema({
-  id: {
+  productId: {
     type: String,
     required: [true, "Please provide a valid id!"],
-    unique: true,
+    unique: false,
+  },
+  userId: {
+    type: String,
+    required: [true, "Please provide a valid id!"],
+    unique: false,
   },
 });
 
