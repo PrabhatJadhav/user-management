@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { UserEmail } from "../model/userModel";
+import { RegisteredUser } from "../model/userModel";
 var validator = require("validator");
 import { ApiResponse } from "../utils/apiResponse";
 import { createOtp, sendOtp, verifyEmailOtp } from "../utils/otpSender";
@@ -21,7 +21,7 @@ const customerLogin = async (req: any, res: any, next: any) => {
     }
 
     if (userEmail && isValidEmail) {
-      const user = await UserEmail.findOne({ email: userEmail });
+      const user = await RegisteredUser.findOne({ email: userEmail });
 
       if (user?.email == userEmail && user?._id) {
         const otp = await createOtp(user._id.toString());
@@ -85,7 +85,7 @@ const customerRegister = (req: any, res: any, next: any) => {
     }
 
     if (userEmail && isValidEmail) {
-      const user = new UserEmail({
+      const user = new RegisteredUser({
         email: userEmail,
       });
 
