@@ -1,21 +1,104 @@
 import mongoose, { Schema, Model } from "mongoose";
 
 interface MoviesObject {
-  id: string;
+  _id: Schema.Types.ObjectId;
+  plot: string;
+  genres: string[];
+  runtime: number; // in minutes
+  cast: string[];
+  poster: string;
+  title: string;
+  fullplot: string;
+  languages: string[];
+  released: {
+    $date: {
+      $numberLong: string; // millis string
+    };
+  };
+  directors: string[];
+  rated: string;
+  awards: {
+    wins: number;
+    nominations: number;
+    text: string;
+  };
+  lastupdated: string; // time instance
+  year: number;
+  imdb: {
+    rating: number;
+    votes: number;
+    id: number;
+  };
+  countries: string[];
+  type: string;
+  tomatoes: {
+    viewer: {
+      rating: number;
+      numReviews: number;
+      meter: number;
+    };
+    fresh: number;
+    critic: {
+      rating: number;
+      numReviews: number;
+      meter: number;
+    };
+    rotten: number;
+    lastUpdated: {
+      $date: string; // time instance
+    };
+  };
+  num_mflix_comments: number;
 }
 
 const MoviesObjectSchema: Schema<MoviesObject> = new Schema({
-  id: {
+  plot: {
     type: String,
-    required: [true, "Please provide a valid id!"],
-    unique: true,
+    required: true,
+  },
+  genres: {
+    type: [String],
+    required: true,
+  },
+  runtime: {
+    type: Number,
+    required: true,
+  },
+  poster: {
+    type: String,
+    required: true,
+  },
+  cast: {
+    type: [String],
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  fullplot: {
+    type: String,
+    required: true,
+  },
+  languages: {
+    type: [String],
+    required: true,
+  },
+  directors: {
+    type: [String],
+    required: true,
+  },
+  released: {
+    $date: {
+      $numberLong: { type: String, required: true }, // millis string
+    },
   },
 });
 
 const Movies: Model<MoviesObject> = mongoose.model<MoviesObject>(
   "Movies",
   MoviesObjectSchema,
-  "Moviesdata"
+  "movies"
 );
 
 export { Movies };
