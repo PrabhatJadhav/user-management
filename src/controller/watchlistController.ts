@@ -34,45 +34,32 @@ const addToWatchlist = async (req: any, res: any, next: any) => {
           })
           .catch((error) => {
             console.log("error", error);
-            //   if (
-            //     error?.errorResponse?.code == 11000 &&
-            //     error?.errorResponse?.keyPattern?.email
-            //   ) {
-            //     res.status(500).send({
-            //       message: "Email Already Exists!",
-            //       error,
-            //     });
+            if (error?.errorResponse?.code == 11000) {
+              res
+                .status(400)
+                .json(ApiResponse.failure("Already added to watchlist!", 400));
 
-            //     return;
-            //   }
+              return;
+            }
 
-            res.status(500).send({
-              message: "Error adding to watchlist",
-              error,
-            });
+            res
+              .status(500)
+              .json(ApiResponse.failure("Error adding to watchlist!", 500));
           });
       } catch (e) {
         console.log("e", e);
-        res
-          .status(500)
-          .json(ApiResponse.success(null, "Something Went Wrong!", 500));
+        res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
       }
     } else if (user?._id) {
-      res
-        .status(400)
-        .json(ApiResponse.success(null, "Please provide a valid id!", 400));
+      res.status(400).json(ApiResponse.failure("Invalid Id!", 400));
     } else if (product?._id) {
-      res.status(400).json(ApiResponse.success(null, "Invalid User!", 400));
+      res.status(400).json(ApiResponse.failure("Invalid User!", 400));
     } else {
-      res
-        .status(500)
-        .json(ApiResponse.success(null, "Something Went Wrong!", 500));
+      res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
     }
   } catch (e) {
     console.log("e", e);
-    res
-      .status(500)
-      .json(ApiResponse.success(null, "Something Went Wrong!", 500));
+    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
   }
 };
 
