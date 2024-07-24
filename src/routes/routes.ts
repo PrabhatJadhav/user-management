@@ -41,6 +41,6 @@ router.post("/generate-refresh-token", getRefreshToken);
 
 router.get("/watchlist/:userId/:productId", addToWatchlist);
 
-router.delete("/watchlist/:id", removeFromWatchlist);
+router.delete("/watchlist/:userId/:productId", removeFromWatchlist);
 
 export { router };

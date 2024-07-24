@@ -63,52 +63,44 @@ const addToWatchlist = async (req: any, res: any, next: any) => {
   }
 };
 
-const removeFromWatchlist = (req: any, res: any, next: any) => {
-  // console.log("req.body", _.get(req.body));
+const removeFromWatchlist = async (req: any, res: any, next: any) => {
+  const productId = req?.params?.productId;
+  const userId = req?.params?.userId;
+
   try {
-    let userEmail = req.body.email;
-    let isValidEmail;
+    //   Find if such product and user exist
 
-    if (userEmail) {
-      isValidEmail = validator.isEmail(userEmail);
-    }
+    const result = await UserWatchlist.find({
+      productId: productId,
+      userId: userId,
+    });
 
-    if (userEmail && isValidEmail) {
-      const user = new Movies({
-        _id: userEmail,
-      });
+    console.log("result", result);
 
-      user
-        .save()
-        .then((result) => {
-          res.status(200).send({
-            message: "User Created Successfully",
-            result,
-          });
-        })
-        .catch((error) => {
-          console.log("error", error);
-          if (
-            error?.errorResponse?.code == 11000 &&
-            error?.errorResponse?.keyPattern?.email
-          ) {
-            res.status(500).send({
-              message: "Email Already Exists!",
-              error,
-            });
-
-            return;
-          }
-
-          res.status(500).send({
-            message: "Error creating user",
-            error,
-          });
+    if (result[0]?.productId == productId && result[0]?.userId == userId) {
+      try {
+        const deleteResult = await UserWatchlist.deleteOne({
+          productId: productId,
+          userId: userId,
         });
+
+        if (deleteResult?.deletedCount) {
+          res
+            .status(200)
+            .json(ApiResponse.failure("Removed from watchlist!", 200));
+        } else {
+          res
+            .status(500)
+            .json(
+              ApiResponse.failure("Error in removing from watchlist!", 500)
+            );
+        }
+      } catch (e) {
+        console.log("e", e);
+        res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
+      }
     } else {
-      res
-        .status(400)
-        .json(ApiResponse.success(null, "Please provide valid Email!", 400));
+      res.status(400).json(ApiResponse.failure("Entry not found!", 400));
     }
   } catch (e) {
     console.log("e", e);
