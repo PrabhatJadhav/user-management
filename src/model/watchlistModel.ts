@@ -18,6 +18,9 @@ const UserWatchlistObjectSchema: Schema<UserWatchlistObject> = new Schema({
   },
 });
 
+// Ensure the combination of productId and userId is unique
+UserWatchlistObjectSchema.index({ productId: 1, userId: 1 }, { unique: true });
+
 const UserWatchlist: Model<UserWatchlistObject> =
   mongoose.model<UserWatchlistObject>(
     "UserWatchlist",
