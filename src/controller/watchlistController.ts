@@ -13,7 +13,7 @@ const addToWatchlist = async (req: any, res: any, next: any) => {
 
     const product = await Movies.findById(productId);
 
-    //   Find if such product exist
+    //   Find if such user exist
 
     const user = await RegisteredUser.findById(userId);
 
@@ -75,7 +75,7 @@ const removeFromWatchlist = async (req: any, res: any, next: any) => {
       userId: userId,
     });
 
-    console.log("result", result);
+    // console.log("result", result);
 
     if (result[0]?.productId == productId && result[0]?.userId == userId) {
       try {
