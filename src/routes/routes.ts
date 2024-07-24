@@ -4,6 +4,10 @@ import {
   verifyOtp,
   getRefreshToken,
 } from "../controller/authController";
+import {
+  addToWatchlist,
+  removeFromWatchlist,
+} from "../controller/watchlistController";
 const express = require("express");
 const router = express.Router();
 import "../cron/otpCleanupCron";
@@ -32,5 +36,11 @@ router.post("/login", customerLogin);
 router.post("/verify-email-otp", verifyOtp);
 
 router.post("/generate-refresh-token", getRefreshToken);
+
+// Watchlist related endpoints
+
+router.get("/watchlist/:userId/:productId", addToWatchlist);
+
+router.delete("/watchlist/:userId/:productId", removeFromWatchlist);
 
 export { router };
