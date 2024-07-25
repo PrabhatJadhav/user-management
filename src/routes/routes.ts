@@ -4,6 +4,7 @@ import {
   verifyOtp,
   getRefreshToken,
 } from "../controller/authController";
+import { getMovies } from "../controller/moviesController";
 import {
   addToWatchlist,
   removeFromWatchlist,
@@ -27,7 +28,7 @@ router.get("/test-auth-access-api", authenticateToken, (req: any, res: any) => {
   res.status(200).send({ data: "Access Provided!" });
 });
 
-// User Login related endpoints
+// User Login endpoints
 
 router.post("/register", customerRegister);
 
@@ -37,10 +38,16 @@ router.post("/verify-email-otp", verifyOtp);
 
 router.post("/generate-refresh-token", getRefreshToken);
 
-// Watchlist related endpoints
+// Watchlist endpoints
 
 router.get("/watchlist/:userId/:productId", addToWatchlist);
 
 router.delete("/watchlist/:userId/:productId", removeFromWatchlist);
+
+// Movies Listing endpoints
+
+router.get("/movie/:movieId", getMovies);
+
+router.get("/movies", getMovies);
 
 export { router };
