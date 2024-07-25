@@ -93,6 +93,66 @@ const MoviesObjectSchema: Schema<MoviesObject> = new Schema({
       $numberLong: { type: String, required: true }, // millis string
     },
   },
+  rated: {
+    type: String,
+    required: true,
+  },
+  awards: {
+    type: {
+      wins: { type: Number, required: true },
+      nominations: { type: Number, required: true },
+      text: { type: String, required: true },
+    },
+    required: true,
+  },
+  lastupdated: {
+    type: String,
+    required: true,
+  },
+  year: {
+    type: Number,
+    required: true,
+  },
+  imdb: {
+    type: {
+      rating: { type: Number, required: true },
+      votes: { type: Number, required: true },
+      id: { type: Number, required: true },
+    },
+    required: true,
+  },
+  countries: {
+    type: [String],
+    required: true,
+  },
+  type: {
+    type: String,
+    required: true,
+  },
+  tomatoes: {
+    type: {
+      viewer: {
+        rating: Number,
+        numReviews: Number,
+        meter: Number,
+      },
+      fresh: Number,
+      critic: {
+        rating: Number,
+        numReviews: Number,
+        meter: Number,
+      },
+      rotten: Number,
+      lastUpdated: {
+        $date: String, // time instance
+      },
+    },
+    required: true,
+  },
+  num_mflix_comments: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Movies: Model<MoviesObject> = mongoose.model<MoviesObject>(
