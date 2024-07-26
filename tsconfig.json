@@ -1,15 +1,30 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "commonjs",
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "target": "ES2020", // Or another target version that supports ES modules
+    "module": "ESNext", // Use ESNext or another ES module system like ES6 or ES2020
     "strict": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist", // The output directory for compiled JavaScript
+    "rootDir": "./src", // The root directory of your TypeScript source files
+    "moduleResolution": "node" // Resolve modules using Node.js conventions
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*"]
 }
+
+// {
+//   "compilerOptions": {
+//     "target": "ES6",
+//     "module": "commonjs",
+//     "outDir": "./dist",
+//     "rootDir": "./src",
+//     "strict": true,
+//     "esModuleInterop": true,
+//     "allowSyntheticDefaultImports": true,
+//     "skipLibCheck": true,
+//     "forceConsistentCasingInFileNames": true
+//   },
+//   "include": ["src"],
+//   "exclude": ["node_modules"]
+// }
