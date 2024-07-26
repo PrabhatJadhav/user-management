@@ -1,15 +1,15 @@
 import bcrypt from "bcrypt";
-import { RegisteredUser } from "../model/userModel";
+import { RegisteredUser } from "../model/userModel.ts";
 var validator = require("validator");
-import { ApiResponse } from "../utils/apiResponse";
-import { createOtp, sendOtp, verifyEmailOtp } from "../utils/otpSender";
+import { ApiResponse } from "../utils/apiResponse.ts";
+import { createOtp, sendOtp, verifyEmailOtp } from "../utils/otpSender.ts";
 import {
   generateRefreshToken,
   generateToken,
   verifyRefreshToken,
-} from "../utils/authUtils";
-import { UserRoles } from "../enums/roleEnums";
-import { JwtTokenPayload } from "../model/jwtTokenPayload.model";
+} from "../utils/authUtils.ts";
+import { UserRoles } from "../enums/roleEnums.ts";
+import { JwtTokenPayload } from "../model/jwtTokenPayload.model.ts";
 
 const customerLogin = async (req: any, res: any, next: any) => {
   try {
@@ -91,13 +91,13 @@ const customerRegister = (req: any, res: any, next: any) => {
 
       user
         .save()
-        .then((result) => {
+        .then((result: any) => {
           res.status(200).send({
             message: "User Created Successfully",
             result,
           });
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.log("error", error);
           if (
             error?.errorResponse?.code == 11000 &&

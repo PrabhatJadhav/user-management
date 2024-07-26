@@ -1,6 +1,5 @@
 import cron from "node-cron";
-import { OtpSchema } from "../model/otpModel";
-import moment from "moment-timezone";
+import { OtpSchema } from "../model/otpModel.ts";
 
 // Schedule the task to run every hour
 cron.schedule("0 * * * *", async () => {

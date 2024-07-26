@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { JwtTokenPayload } from "../model/jwtTokenPayload.model";
+import { JwtTokenPayload } from "../model/jwtTokenPayload.model.ts";
 require("dotenv").config();
 
 export const generateToken = (payload: JwtTokenPayload) => {

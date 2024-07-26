@@ -1,4 +1,4 @@
-import { PaginationObject } from "./paginationModel";
+import { PaginationObject } from "./paginationModel.ts";
 
 export interface ListDataModel {
   listData: any[];

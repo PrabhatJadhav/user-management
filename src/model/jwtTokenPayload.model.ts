@@ -1,4 +1,4 @@
-import { UserRoles } from "../enums/roleEnums";
+import { UserRoles } from "../enums/roleEnums.ts";
 
 export interface JwtTokenPayload {
   userId: string | number;

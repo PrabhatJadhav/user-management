@@ -1,6 +1,6 @@
-import { JwtTokenPayload } from "../model/jwtTokenPayload.model";
-import { ApiResponse } from "../utils/apiResponse";
-import { verifyToken } from "../utils/authUtils";
+import { JwtTokenPayload } from "../model/jwtTokenPayload.model.ts";
+import { ApiResponse } from "../utils/apiResponse.ts";
+import { verifyToken } from "../utils/authUtils.ts";
 
 const authenticateToken = (req: any, res: any, next: any) => {
   const authHeader = req.headers["authorization"];

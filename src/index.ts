@@ -1,8 +1,8 @@
 import express from "express";
-import { dbConnect } from "./db/dbConnect";
+import { dbConnect } from "./db/dbConnect.ts";
 import bodyParser from "body-parser";
 import cors from "cors";
-import { router } from "./routes/routes";
+import { router } from "./routes/routes.ts";
 
 const app = express();
 const PORT = process.env.PORT || 8080;

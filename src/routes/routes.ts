@@ -3,16 +3,16 @@ import {
   customerLogin,
   verifyOtp,
   getRefreshToken,
-} from "../controller/authController";
-import { getMovies } from "../controller/moviesController";
+} from "../controller/authController.ts";
+import { getMovies } from "../controller/moviesController.ts";
 import {
   addToWatchlist,
   removeFromWatchlist,
-} from "../controller/watchlistController";
+} from "../controller/watchlistController.ts";
 const express = require("express");
 const router = express.Router();
-import "../cron/otpCleanupCron";
-import { authenticateToken } from "../middleware/verifyTokens";
+import "../cron/otpCleanupCron.ts";
+import { authenticateToken } from "../middleware/verifyTokens.ts";
 
 // Test endpoints
 

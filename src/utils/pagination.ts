@@ -1,4 +1,4 @@
-import { PaginationObject } from "../model/paginationModel";
+import { PaginationObject } from "../model/paginationModel.ts";
 
 export const getPaginationData = (
   count: number,

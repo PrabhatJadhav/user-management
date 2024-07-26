@@ -1,6 +1,6 @@
 import { authenticator } from "otplib";
 import nodemailer from "nodemailer";
-import { OtpSchema } from "../model/otpModel";
+import { OtpSchema } from "../model/otpModel.ts";
 require("dotenv").config();
 
 const otpExpiry = 1 * 60 * 1000; // OTP expiry time in milliseconds (1 minute)

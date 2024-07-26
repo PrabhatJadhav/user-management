@@ -1,7 +1,7 @@
-import { ListDataModel } from "../model/listDataModel";
-import { Movies } from "../model/moviesModel";
-import { ApiResponse } from "../utils/apiResponse";
-import { getPaginationData } from "../utils/pagination";
+import { ListDataModel } from "../model/listDataModel.ts";
+import { Movies } from "../model/moviesModel.ts";
+import { ApiResponse } from "../utils/apiResponse.ts";
+import { getPaginationData } from "../utils/pagination.ts";
 
 const getMovies = async (req: any, res: any, next: any) => {
   const movieId = req?.params?.movieId;

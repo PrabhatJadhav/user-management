@@ -1,8 +1,8 @@
-import { Movies } from "../model/moviesModel";
-import { RegisteredUser } from "../model/userModel";
-import { UserWatchlist } from "../model/watchlistModel";
+import { Movies } from "../model/moviesModel.ts";
+import { RegisteredUser } from "../model/userModel.ts";
+import { UserWatchlist } from "../model/watchlistModel.ts";
 var validator = require("validator");
-import { ApiResponse } from "../utils/apiResponse";
+import { ApiResponse } from "../utils/apiResponse.ts";
 
 const addToWatchlist = async (req: any, res: any, next: any) => {
   const productId = req?.params?.productId;
@@ -26,13 +26,13 @@ const addToWatchlist = async (req: any, res: any, next: any) => {
       try {
         addToUserWatchlist
           .save()
-          .then((result) => {
+          .then((result: any) => {
             res.status(200).send({
               message: "Added to watchlist!",
               result,
             });
           })
-          .catch((error) => {
+          .catch((error: any) => {
             console.log("error", error);
             if (error?.errorResponse?.code == 11000) {
               res
