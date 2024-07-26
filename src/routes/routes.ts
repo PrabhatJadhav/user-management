@@ -40,14 +40,18 @@ router.post("/generate-refresh-token", getRefreshToken);
 
 // Watchlist endpoints
 
-router.get("/watchlist/:userId/:productId", addToWatchlist);
+router.get("/watchlist/:userId/:productId", authenticateToken, addToWatchlist);
 
-router.delete("/watchlist/:userId/:productId", removeFromWatchlist);
+router.delete(
+  "/watchlist/:userId/:productId",
+  authenticateToken,
+  removeFromWatchlist
+);
 
 // Movies Listing endpoints
 
-router.get("/movie/:movieId", getMovies);
+router.get("/movie/:movieId", authenticateToken, getMovies);
 
-router.get("/movies", getMovies);
+router.get("/movies", authenticateToken, getMovies);
 
 export { router };
