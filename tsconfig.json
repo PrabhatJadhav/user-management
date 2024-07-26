@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020", // Or another target version that supports ES modules
-    "module": "ESNext", // Use ESNext or another ES module system like ES6 or ES2020
+    "module": "CommonJS", // Use ESNext or another ES module system like ES6 or ES2020
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
