@@ -6,7 +6,7 @@ import { createOtp, sendOtp, verifyEmailOtp } from "../utils/otpSender";
 import {
   generateRefreshToken,
   generateToken,
-  verifyRefreshToken,
+  verifyToken,
 } from "../utils/authUtils";
 import { UserRoles } from "../enums/roleEnums";
 import { JwtTokenPayload } from "../model/jwtTokenPayload.model";
@@ -189,7 +189,7 @@ const getRefreshToken = async (req: any, res: any, next: any) => {
 
     if (refreshToken && userId) {
       const refreshTokenDetails: JwtTokenPayload | null =
-        verifyRefreshToken(refreshToken);
+        verifyToken(refreshToken);
 
       if (refreshTokenDetails?.role) {
         try {
