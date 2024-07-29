@@ -47,27 +47,3 @@ export const verifyToken = (token: string): JwtTokenPayload | null => {
     return null;
   }
 };
-
-export const verifyRefreshToken = (
-  refreshToken: string
-): JwtTokenPayload | null => {
-  if (process.env.REFRESH_TOKEN_SECRET) {
-    try {
-      let decodedResult: JwtTokenPayload = jwt.verify(
-        refreshToken,
-        process.env.REFRESH_TOKEN_SECRET
-      ) as JwtTokenPayload;
-
-      if (decodedResult?.userId) {
-        return decodedResult;
-      } else {
-        return null;
-      }
-    } catch (err) {
-      console.log("verifyRefreshToken catch", err);
-      return null;
-    }
-  } else {
-    return null;
-  }
-};
