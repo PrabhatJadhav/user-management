@@ -40,13 +40,9 @@ router.post("/generate-refresh-token", getRefreshToken);
 
 // Watchlist endpoints
 
-router.get("/watchlist/:userId/:productId", authenticateToken, addToWatchlist);
+router.get("/watchlist/:productId", authenticateToken, addToWatchlist);
 
-router.delete(
-  "/watchlist/:userId/:productId",
-  authenticateToken,
-  removeFromWatchlist
-);
+router.delete("/watchlist/:productId", authenticateToken, removeFromWatchlist);
 
 // Movies Listing endpoints
 
