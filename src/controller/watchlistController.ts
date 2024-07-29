@@ -1,12 +1,17 @@
+import { JwtTokenPayload } from "../model/jwtTokenPayload.model";
 import { Movies } from "../model/moviesModel";
 import { RegisteredUser } from "../model/userModel";
 import { UserWatchlist } from "../model/watchlistModel";
 var validator = require("validator");
 import { ApiResponse } from "../utils/apiResponse";
+import { verifyToken } from "../utils/authUtils";
 
 const addToWatchlist = async (req: any, res: any, next: any) => {
   const productId = req?.params?.productId;
-  const userId = req?.params?.userId;
+
+  const payloadInfo: JwtTokenPayload | null = verifyToken(
+    req?.headers?.authorization?.split(" ")[1]
+  );
 
   try {
     //   Find if such product exist
@@ -15,12 +20,12 @@ const addToWatchlist = async (req: any, res: any, next: any) => {
 
     //   Find if such user exist
 
-    const user = await RegisteredUser.findById(userId);
+    const user = await RegisteredUser.findById(payloadInfo?.userId);
 
     if (product?._id && user?._id) {
       const addToUserWatchlist = new UserWatchlist({
         productId: productId,
-        userId: userId,
+        userId: payloadInfo?.userId,
       });
 
       try {
@@ -65,29 +70,35 @@ const addToWatchlist = async (req: any, res: any, next: any) => {
 
 const removeFromWatchlist = async (req: any, res: any, next: any) => {
   const productId = req?.params?.productId;
-  const userId = req?.params?.userId;
+
+  const payloadInfo: JwtTokenPayload | null = verifyToken(
+    req?.headers?.authorization?.split(" ")[1]
+  );
 
   try {
     //   Find if such product and user exist
 
     const result = await UserWatchlist.find({
       productId: productId,
-      userId: userId,
+      userId: payloadInfo?.userId,
     });
 
     // console.log("result", result);
 
-    if (result[0]?.productId == productId && result[0]?.userId == userId) {
+    if (
+      result[0]?.productId == productId &&
+      result[0]?.userId == payloadInfo?.userId
+    ) {
       try {
         const deleteResult = await UserWatchlist.deleteOne({
           productId: productId,
-          userId: userId,
+          userId: payloadInfo?.userId,
         });
 
         if (deleteResult?.deletedCount) {
           res
             .status(200)
-            .json(ApiResponse.failure("Removed from watchlist!", 200));
+            .json(ApiResponse.success(result, "Removed from watchlist!", 200));
         } else {
           res
             .status(500)
