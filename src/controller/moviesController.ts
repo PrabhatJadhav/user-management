@@ -30,7 +30,7 @@ const getMovies = async (req: any, res: any, next: any) => {
   //   Return movies list
 
   const pageNo = parseInt(req?.query?.pageNo) || 1;
-  const pageSize = parseInt(req?.query?.pageSize) || 2;
+  const pageSize = parseInt(req?.query?.pageSize) || 25;
   const skip = (pageNo - 1) * pageSize;
 
   try {
@@ -40,7 +40,7 @@ const getMovies = async (req: any, res: any, next: any) => {
 
     // ?.exec();
 
-    const count = await Movies.countDocuments();
+    const count = await Movies?.countDocuments();
 
     let returnObject: ListDataModel = {
       listData: movies?.length > 0 ? movies : [],
