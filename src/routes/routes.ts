@@ -7,6 +7,7 @@ import {
 import { getMovies } from "../controller/moviesController";
 import {
   addToWatchlist,
+  getUsersWatchlist,
   removeFromWatchlist,
 } from "../controller/watchlistController";
 const express = require("express");
@@ -41,6 +42,8 @@ router.post("/generate-refresh-token", getRefreshToken);
 // Watchlist endpoints
 
 router.get("/watchlist/:productId", authenticateToken, addToWatchlist);
+
+router.get("/user-watchlist", authenticateToken, getUsersWatchlist);
 
 router.delete("/watchlist/:productId", authenticateToken, removeFromWatchlist);
 
