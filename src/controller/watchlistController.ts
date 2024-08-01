@@ -8,65 +8,75 @@ import { verifyToken } from "../utils/authUtils";
 import { getPaginationData } from "../utils/pagination";
 
 const addToWatchlist = async (req: any, res: any, next: any) => {
-  const productId = req?.params?.productId;
+  const productId = req?.body?.productId;
 
-  const payloadInfo: JwtTokenPayload | null = verifyToken(
-    req?.headers?.authorization?.split(" ")[1]
-  );
+  if (productId) {
+    const payloadInfo: JwtTokenPayload | null = verifyToken(
+      req?.headers?.authorization?.split(" ")[1]
+    );
 
-  try {
-    //   Find if such product exist
+    try {
+      //   Find if such product exist
 
-    const product = await Movies.findById(productId);
+      const product = await Movies.findById(productId);
 
-    //   Find if such user exist
+      //   Find if such user exist
 
-    const user = await RegisteredUser.findById(payloadInfo?.userId);
+      const user = await RegisteredUser.findById(payloadInfo?.userId);
 
-    if (product?._id && user?._id) {
-      const addToUserWatchlist = new UserWatchlist({
-        productId: productId,
-        userId: payloadInfo?.userId,
-      });
+      if (product?._id && user?._id) {
+        const addToUserWatchlist = new UserWatchlist({
+          productId: productId,
+          userId: payloadInfo?.userId,
+        });
 
-      try {
-        addToUserWatchlist
-          .save()
-          .then((result) => {
-            res.status(200).send({
-              message: "Added to watchlist!",
-              result,
-            });
-          })
-          .catch((error) => {
-            console.log("error", error);
-            if (error?.errorResponse?.code == 11000) {
+        try {
+          addToUserWatchlist
+            .save()
+            .then((result) => {
+              res.status(200).send({
+                message: "Added to watchlist!",
+                result,
+              });
+            })
+            .catch((error) => {
+              console.log("error", error);
+              if (error?.errorResponse?.code == 11000) {
+                res
+                  .status(400)
+                  .json(
+                    ApiResponse.failure("Already added to watchlist!", 400)
+                  );
+
+                return;
+              }
+
               res
-                .status(400)
-                .json(ApiResponse.failure("Already added to watchlist!", 400));
-
-              return;
-            }
-
-            res
-              .status(500)
-              .json(ApiResponse.failure("Error adding to watchlist!", 500));
-          });
-      } catch (e) {
-        console.log("e", e);
+                .status(500)
+                .json(ApiResponse.failure("Error adding to watchlist!", 500));
+            });
+        } catch (e) {
+          console.log("e", e);
+          res
+            .status(500)
+            .json(ApiResponse.failure("Something Went Wrong!", 500));
+        }
+      } else if (user?._id) {
+        res.status(400).json(ApiResponse.failure("Invalid Id!", 400));
+      } else if (product?._id) {
+        res.status(400).json(ApiResponse.failure("Invalid User!", 400));
+      } else {
         res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
       }
-    } else if (user?._id) {
-      res.status(400).json(ApiResponse.failure("Invalid Id!", 400));
-    } else if (product?._id) {
-      res.status(400).json(ApiResponse.failure("Invalid User!", 400));
-    } else {
+    } catch (e) {
+      console.log("e", e);
       res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
     }
-  } catch (e) {
-    console.log("e", e);
-    res.status(500).json(ApiResponse.failure("Something Went Wrong!", 500));
+
+    return;
   }
+
+  res.status(400).json(ApiResponse.failure("Product Id is required!", 400));
 };
 
 const removeFromWatchlist = async (req: any, res: any, next: any) => {
