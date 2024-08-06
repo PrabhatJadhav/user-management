@@ -1,0 +1,29 @@
+With mongo cli / mongosh we can create db on our local hard disk
+
+Open mongosh and type command "mongosh", this will start the connection and show you the url of your cluster
+
+At this point you can type a command "show dbs" to show all dbs in your cluster
+
+To select a db use command "use <db name>"
+
+To select/show a collection in this db use command "use / show <db name>"
+
+If db / collection in not present in use command it will create a new Open
+
+To add documents in collections > we can use functions like insertOne({key:"value"}) and insertMany([{key:"value"},{key:"value"},{key:"value"}])
+
+Various data types can be used in the value field > string, boolean, number, double, aonther document ( a key value pair doc ) etc.
+
+To list all the documents in a collection use > db( the current selected db ).collectionName.find()
+
+To list all the documents and sort it in ASC/DESC > db( the current selected db ).collectionName.find().sort({field name which needs to be sorted : ASC 1 / DESC -1})
+
+Default sorting is with objectId field (FIFO)
+
+Use limit method to fetch only a certain number of documents > db.collectionName.find().limit(5) > gives first 5 docs sorted by objectId
+
+To filter the documents in a collection use > db.collectionName.find({field name which needs to be filtered : search,field name which needs to be filtered : search},{})
+
+the second document here is the projection parameter > only return required info / fields
+
+To filter the documents in a collection use > db.collectionName.find({name : "harry",imdb:8},{name:true,imdb:true,plot:true,cast:true,_id:false}) > id is default field but can be configured
