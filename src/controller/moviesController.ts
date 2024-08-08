@@ -37,8 +37,6 @@ const getMovies = async (req: any, res: any, next: any) => {
   try {
     //   Find movies
 
-    // const movies = await Movies?.find()?.skip(skip)?.limit(pageSize);
-
     const movies = await Movies?.find({
       $or: [
         { title: { $regex: searchString, $options: "i" } },
@@ -49,17 +47,6 @@ const getMovies = async (req: any, res: any, next: any) => {
     })
       ?.skip(skip)
       ?.limit(pageSize);
-
-    // const movies = await Movies?.find({
-    //   $or: [
-    //     { title: searchString },
-    //     { cast: searchString },
-    //     { genres: searchString },
-    //     { plot: searchString },
-    //   ],
-    // })
-    //   ?.skip(skip)
-    //   ?.limit(pageSize);
 
     // ?.exec();
 
