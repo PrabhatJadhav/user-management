@@ -32,11 +32,34 @@ const getMovies = async (req: any, res: any, next: any) => {
   const pageNo = parseInt(req?.query?.pageNo) || 1;
   const pageSize = parseInt(req?.query?.pageSize) || 25;
   const skip = (pageNo - 1) * pageSize;
+  const searchString = req?.query?.search?.toString()?.trim() ?? "";
 
   try {
     //   Find movies
 
-    const movies = await Movies?.find()?.skip(skip)?.limit(pageSize);
+    // const movies = await Movies?.find()?.skip(skip)?.limit(pageSize);
+
+    const movies = await Movies?.find({
+      $or: [
+        { title: { $regex: searchString, $options: "i" } },
+        { cast: { $regex: searchString, $options: "i" } },
+        { genres: { $regex: searchString, $options: "i" } },
+        { plot: { $regex: searchString, $options: "i" } },
+      ],
+    })
+      ?.skip(skip)
+      ?.limit(pageSize);
+
+    // const movies = await Movies?.find({
+    //   $or: [
+    //     { title: searchString },
+    //     { cast: searchString },
+    //     { genres: searchString },
+    //     { plot: searchString },
+    //   ],
+    // })
+    //   ?.skip(skip)
+    //   ?.limit(pageSize);
 
     // ?.exec();
 
