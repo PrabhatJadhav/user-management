@@ -1,0 +1,105 @@
+## Setup
+
+With mongo cli / mongosh we can create db on our local hard disk
+
+Open mongosh and type command "mongosh", this will start the connection and show you the url of your cluster
+
+At this point you can type a command "show dbs" to show all dbs in your cluster
+
+## Databases
+
+To select a db use command "use <db name>"
+
+To select/show a collection in this db use command "use / show <db name>"
+
+## Collections
+
+If db / collection in not present in use command it will create a new Open
+
+## Add Documents
+
+To add documents in collections > we can use functions like insertOne({key:"value"}) and insertMany([{key:"value"},{key:"value"},{key:"value"}])
+
+Various data types can be used in the value field > string, boolean, number, double, aonther document ( a key value pair doc ) etc.
+
+## Find / Filter / Sort / Paginate Documents
+
+To list all the documents in a collection use > db( the current selected db ).collectionName.find()
+
+To list all the documents and sort it in ASC/DESC > db( the current selected db ).collectionName.find().sort({field name which needs to be sorted : ASC 1 / DESC -1})
+
+Default sorting is with objectId field (FIFO)
+
+Use limit method to fetch only a certain number of documents > db.collectionName.find().limit(5) > gives first 5 docs sorted by objectId
+
+Use skip method to skip certain number of documents > db.collectionName.find().skip(5) > skips first 5 docs and returns reminder which is sorted by objectId
+
+To filter the documents in a collection use > db.collectionName.find({field name which needs to be filtered : search,field name which needs to be filtered : search},{})
+
+the second document here is the projection parameter > only return required info / fields
+
+To filter the documents in a collection use > db.collectionName.find({name : "harry",imdb:8},{name:true,imdb:true,plot:true,cast:true,_id:false}) > id is default field but can be configured
+
+
+## Update Documents
+
+Can be described as a mix of find and insert > db.collectionName.updateOne({name : "harry",imdb:8},{$set:{field:value}}) > first value with name and imdb will get updated with field value pair, if field not present it will be created ( updateMany will change all docs with matching criteria )
+
+use $set to set / update a field and $unset to remove a field completely
+
+to update many for all docs send {} as first parameter
+
+can also use updateMany as a filter to find if any doc is missing a field  > db.collectionName.updateMany({imdb:{$exist:false}},{$set:{field:value}})
+
+With Id > db.collectionName.updateOne({_id : ObjectId(3432nwv223n3n3j23)},{$set:{field:value}})
+Some values are BSON
+
+
+## Delete Documents > Same as add / update
+
+## Comparison Operators 
+
+db.collectionName.find({name : {$ne:"harry"}}) > every doc which is not equal to name > harry
+
+db.collectionName.find({imdb : {$lt:5}}) > every doc with imdb less than 5 ( $lte for less than and equal to, $gt for greater than, $gte )
+
+db.collectionName.find({imdb : {$lt:5,$gt:3}}) > less than 5, greater than 3
+
+db.collectionName.find({name : {$in:[harry,spiderman]}}) > all docs with name in array
+
+db.collectionName.find({name : {$nin:[harry,spiderman]}}) > all docs which do not include name in array
+
+
+## Logical Operators 
+
+db.collectionName.find({$and:[{imdb:{$gte:9}},{name:[marvel,dc]}]}) > every doc with imdb greater than or equal to 9 AND name (marvel or dc)
+
+db.collectionName.find({$or:[{imdb:{$gte:9}},{name:[marvel,dc]}]}) > every doc with imdb greater than or equal to 9 OR name (marvel or dc)
+
+db.collectionName.find({$nor:[{imdb:{$gte:9}},{name:[marvel,dc]}]}) > every doc with imdb less than or equal to 9 AND name not equal to (marvel or dc)
+
+
+db.collectionName.find({$not:[{imdb:{$gte:9}},{name:[marvel,dc]}]}) > every doc with imdb less than or equal to 9 OR name not equal to (marvel or dc)
+
+to get null or undefined values use not operator
+
+## Indexes
+
+Allows for efficient execution of queries but takes up space on DB and slows down insert, update, remove operations
+
+
+## Searching Movies
+
+Exact Match: If you're using an exact match, ensure that searchString exactly matches the title field in the document, including case sensitivity.
+
+Case Sensitivity: MongoDB's default string matching is case-sensitive. If your searchString is in a different case than the title, it will return no results.
+
+Whitespace and Special Characters: Make sure there are no extra spaces or special characters in the searchString or the title field in the database.
+
+Use Regex for Partial Matches: If you want to find titles that partially match the searchString, use a regular expression
+
+The $options: 'i' makes the search case-insensitive
+
+Query > Movies?.find({ title: { $regex: searchString, $options: 'i' } })
+
+
