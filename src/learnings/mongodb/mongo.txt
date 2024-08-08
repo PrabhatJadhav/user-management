@@ -82,3 +82,9 @@ db.collectionName.find({$nor:[{imdb:{$gte:9}},{name:[marvel,dc]}]}) > every doc 
 db.collectionName.find({$not:[{imdb:{$gte:9}},{name:[marvel,dc]}]}) > every doc with imdb less than or equal to 9 OR name not equal to (marvel or dc)
 
 to get null or undefined values use not operator
+
+## Indexes
+
+Allows for efficient execution of queries but takes up space on DB and slows down insert, update, remove operations
+
+
