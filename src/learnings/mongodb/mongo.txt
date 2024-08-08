@@ -88,3 +88,18 @@ to get null or undefined values use not operator
 Allows for efficient execution of queries but takes up space on DB and slows down insert, update, remove operations
 
 
+## Searching Movies
+
+Exact Match: If you're using an exact match, ensure that searchString exactly matches the title field in the document, including case sensitivity.
+
+Case Sensitivity: MongoDB's default string matching is case-sensitive. If your searchString is in a different case than the title, it will return no results.
+
+Whitespace and Special Characters: Make sure there are no extra spaces or special characters in the searchString or the title field in the database.
+
+Use Regex for Partial Matches: If you want to find titles that partially match the searchString, use a regular expression
+
+The $options: 'i' makes the search case-insensitive
+
+Query > Movies?.find({ title: { $regex: searchString, $options: 'i' } })
+
+
